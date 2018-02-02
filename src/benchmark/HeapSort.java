@@ -1,26 +1,102 @@
 package benchmark;
 
-public interface HeapSort {
 
-    int left(int index);
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Date;
 
-    int right(int index);
+public class HeapSort implements SortInterface {
 
-    int parent(int index);
+    private int count;
+    private long duration;
 
-    int root();
+    public int left(int index) {
+        return 2 * index;
+    }
 
-    int getElement(int index);
 
-    void resize();
+    public int right(int index) {
+        return 2 * index + 1;
+    }
 
-    void add(int value);
+    public int parent(int index) {
+        return (index) / 2;
+    }
 
-    void bubbleUp(int child);
+    public void heapifyRecursive(int[] array, int i, int m) {
+        int left = left(i);
+        int right = right(i);
 
-    void heapify(int parent);
+        int max = i;
+        if (left <= m && array[left] > array[max]) {
+            max = left;
+        }
+        if (right <= m && array[right] > array[max]) {
+            max = right;
+        }
+        if (max != i) {
+            swap(array, i, max);
+            heapifyRecursive(array, max, m);
+        }
+    }
 
-    int[] heapSort();
+    public void buildHeapRecursive(int n, int[] array) {
+        for (int i = n / 2; i >= 1; i--) {
+            heapifyRecursive(array, i, n);
+            count++;
+        }
+    }
 
-    void swap(int parent, int child);
+    public void heapSortRecursive(int n, int[] list) throws UnsortedException {
+        LocalDateTime startTime = LocalDateTime.now();
+        buildHeapRecursive(n, list);
+        int max = n;
+        while (max >= 2) {
+            swap(list, 1, max);
+            max = max - 1;
+            count++;
+            heapifyRecursive(list, 1, max);
+        }
+        LocalDateTime endTime = LocalDateTime.now();
+        duration = Duration.between(startTime, endTime).toNanos();
+        checkSort(list);
+
+    }
+
+    public void swap(int[] array, int parent, int child) {
+        int temp = array[parent];
+        array[parent] = array[child];
+        array[child] = temp;
+    }
+
+    public void checkSort(int[] array) throws UnsortedException {
+        for (int i = 1; i < array.length; i++) {
+            if (array[i - 1] > array[i]) {
+                throw new UnsortedException("Array Not Sorted");
+            }
+        }
+    }
+
+    @Override
+    public void recursiveSort(int[] list) throws UnsortedException {
+        count = 0;
+        duration = 0;
+        heapSortRecursive(list.length - 1, list);
+    }
+
+    @Override
+    public void iterativeSort(int[] list) {
+
+    }
+
+    @Override
+    public int getCount() {
+        return count;
+    }
+
+    @Override
+    public long getTime() {
+        return duration;
+    }
+
 }

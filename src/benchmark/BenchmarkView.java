@@ -3,11 +3,12 @@ package benchmark;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.text.ParseException;
 
-public class CustomJPanel extends JPanel {
+public class BenchmarkView extends JPanel {
 
    Border loweredbevel = BorderFactory.createLoweredBevelBorder();
-    public CustomJPanel() {
+    public BenchmarkView() {
         super(new GridBagLayout());
         buildPanel();
     }
@@ -43,12 +44,31 @@ public class CustomJPanel extends JPanel {
         gridBagConstraints.gridwidth = 1;
 
         gridBagConstraints.ipady = 10;
-        for (int x = 0; x < 9; x ++) {
-            for (int y = 0; y <= 10; y++ ){
+
+        int sizesIndex = 0;
+
+
+        for (int y = 0; y <= 11; y++) {
+            for (int x = 0; x < 9; x ++){
+
                 JPanel jPanel = new JPanel();
+                if (y == 1 && x > 0) {
+                    jPanel = setPanelRowY1(x, jPanel);
+                }
+                if (y > 1) {
+                    JLabel label;
+                    if (x == 0) {
+                        label = new JLabel(String.valueOf(BenchmarkSorts.sizes[sizesIndex++]));
+                    } else {
+                        label = new JLabel("");
+                        BenchMarkController.add(label);
+                    }
+                    jPanel.add(label);
+                }
                 jPanel.setBorder(loweredbevel);
                 gridBagConstraints.gridx = x;
                 gridBagConstraints.gridy = y;
+
                 this.add(jPanel, gridBagConstraints);
 
             }
@@ -57,7 +77,16 @@ public class CustomJPanel extends JPanel {
 
     }
 
-    private void setPanelRowY2(int j) {
-
+    private JPanel setPanelRowY1(int x, JPanel jPanel) {
+        if (x%4 == 1) {
+            jPanel.add(new JLabel("Average Critical Operation Count"));
+        } else if (x%4 == 2) {
+            jPanel.add(new JLabel("Coefficient of Variance of Count"));
+        } else if (x%4 ==3) {
+            jPanel.add(new JLabel("Average Execution time"));
+        } else {
+            jPanel.add(new JLabel("Coefficient of Variance of Time"));
+        }
+        return jPanel;
     }
 }
