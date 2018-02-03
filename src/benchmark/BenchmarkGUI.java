@@ -1,6 +1,7 @@
 package benchmark;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 
 public class BenchmarkGUI {
@@ -26,7 +27,7 @@ public class BenchmarkGUI {
 
     public void displayFrame(){
         jFrame.setVisible(true);
-       // jFrame.setLayout(new FlowLayout());
+        jFrame.setLayout(new FlowLayout());
 
     }
 
@@ -42,6 +43,5 @@ class StartButtonAction extends AbstractAction {
         }catch (UnsortedException ue) {
             System.out.println(ue.getStackTrace());
         }
-        System.out.println("Finished");
     }
 }
