@@ -17,7 +17,7 @@ public class BenchMarkController {
         benchMarkController.labelList.add(label);
     }
 
-    public static List<JLabel> get() {
+    public static List<JLabel> getLabelList() {
         return benchMarkController.labelList;
     }
 }

@@ -47,10 +47,8 @@ public class BenchmarkView extends JPanel {
 
         int sizesIndex = 0;
 
-
         for (int y = 0; y <= 11; y++) {
             for (int x = 0; x < 9; x ++){
-
                 JPanel jPanel = new JPanel();
                 if (y == 1 && x > 0) {
                     jPanel = setPanelRowY1(x, jPanel);
@@ -73,8 +71,6 @@ public class BenchmarkView extends JPanel {
 
             }
         }
-
-
     }
 
     private JPanel setPanelRowY1(int x, JPanel jPanel) {
