@@ -7,25 +7,31 @@ import java.util.List;
 
 public class BenchmarkSorts {
 
-    static int[] sizes = {100, 500, 1_000, 5_000, 10_000, 50_000, 100_000, 500_000, 1_000_000, 5_000_000};
+    static int[] sizes = {1_000, 5_000, 10_000, 50_000, 100_000, 500_000, 1_000_000, 2_500_000, 5_000_000, 7_000_000};
 
     static int[] dataSet;
 
-    static long[] countSet;
-    static long[] timeSet;
+    static long[] countSetRecursive;
+    static long[] timeSetRecursive;
+
+    static long[] countSetIterative;
+    static long[] timeSetIterative;
 
 
     static java.util.Random rn = new java.util.Random();
     //TODO: Getting divide by zero errors, could be due to dividing numbers and rounding to 100 place.
 
     //Warm up the JVM
-  /*  static {
+
+    static {
         for (int i = 0; i < 4; i++) {
             results = new ArrayList<>();
             HeapSort heapSort = new HeapSort();
             dataSet = new int[sizes[i]];
-            countSet = new long[50];
-            timeSet = new long[50];
+            countSetRecursive = new long[50];
+            timeSetRecursive = new long[50];
+            countSetIterative = new long[50];
+            timeSetIterative = new long[50];
             for (int runIndex = 0; runIndex < 50; runIndex++) {
                 for (int j = 1; j < dataSet.length; j++) {
                     int random = rn.nextInt(100) + 1;  //Random numbers 0 - 99;
@@ -33,6 +39,7 @@ public class BenchmarkSorts {
                 }
                 try {
                     heapSort.recursiveSort(dataSet);
+                    heapSort.iterativeSort(dataSet);
                 } catch (Exception e) {
                     System.out.println(e);
                 }
@@ -40,7 +47,7 @@ public class BenchmarkSorts {
 
         }
     }
-*/
+
     private BenchmarkSorts() {
     }
 
@@ -49,32 +56,35 @@ public class BenchmarkSorts {
     static void runSorts() throws UnsortedException {
         results = new ArrayList<>();
         HeapSort heapSort = new HeapSort();
-        //Each Data Set gets ran 50 times.
+
         for (int i = 0; i < sizes.length; i++) {
             dataSet = new int[sizes[i]];
-            countSet = new long[50];
-            timeSet = new long[50];
+            countSetRecursive = new long[50];
+            timeSetRecursive = new long[50];
             for (int runIndex = 0; runIndex < 50; runIndex++) {
-                for (int j = 1; j < dataSet.length; j++) {
-                    int random = rn.nextInt(100) + 1;  //Random numbers 0 - 99;
-                    dataSet[j] = random;
-                }
+                   for (int j = 1; j < dataSet.length; j++) {
+                       int random = rn.nextInt(100) + 1;  //Random numbers 0 - 99;
+                       dataSet[j] = random;
+                   }
+
+                heapSort.iterativeSort(dataSet);
+                countSetIterative[runIndex] = heapSort.getCount();
+                timeSetIterative[runIndex] = heapSort.getTime();
 
                 heapSort.recursiveSort(dataSet);
-                countSet[runIndex] = heapSort.getCount();
-                timeSet[runIndex] = heapSort.getTime();
-                /*
-                heapSort.iterativeSort(dataSet);
-                countSSet[runIndex] = heapSort.getCount();
-                timeSet[runIndex] = heapSort.getTime();
-                 */
-
-
+                countSetRecursive[runIndex] = heapSort.getCount();
+                timeSetRecursive[runIndex] = heapSort.getTime();
             }
-            results.add(String.valueOf(average(countSet)));
-            results.add(String.valueOf(coefficientOfVariance(countSet)));
-            results.add(String.valueOf(average(timeSet)));
-            results.add(String.valueOf(coefficientOfVariance(timeSet)));
+            results.add(String.valueOf(average(countSetIterative)));
+            results.add(String.valueOf(coefficientOfVariance(countSetIterative)));
+            results.add(String.valueOf(average(timeSetIterative)));
+            results.add(String.valueOf(coefficientOfVariance(timeSetIterative)));
+
+            results.add(String.valueOf(average(countSetRecursive)));
+            results.add(String.valueOf(coefficientOfVariance(countSetRecursive)));
+            results.add(String.valueOf(average(timeSetRecursive)));
+            results.add(String.valueOf(coefficientOfVariance(timeSetRecursive)));
+
         }
         displayReport(results);
 
@@ -82,10 +92,9 @@ public class BenchmarkSorts {
     }
 
     static void displayReport(List<String> results) {
-        BenchMarkController.getLabelList().get(0).setText(results.get(0).toString());
-        BenchMarkController.getLabelList().get(1).setText(results.get(1).toString());
-        BenchMarkController.getLabelList().get(2).setText(results.get(2).toString());
-        BenchMarkController.getLabelList().get(3).setText(results.get(3).toString());
+        for (int i = 0; i < results.size(); i++) {
+            BenchMarkController.getLabelList().get(i).setText(results.get(i));
+        }
     }
 
     public static double coefficientOfVariance(long[] resultSet) {
@@ -107,7 +116,7 @@ public class BenchmarkSorts {
 
         BigDecimal standardDeviation = BigDecimal.valueOf(Math.sqrt(sumOfSquaresDividedByNMinusOne.doubleValue()));
 
-        return standardDeviation.divide(average, 15, RoundingMode.HALF_UP).doubleValue();
+        return standardDeviation.divide(average, 100, RoundingMode.HALF_UP).doubleValue();
     }
 
     public static List<BigDecimal> subtractTheMean(List<BigDecimal> resultSetBigDecimal, BigDecimal average) {
@@ -135,7 +144,7 @@ public class BenchmarkSorts {
     }
 
     public static BigDecimal divideSums(BigDecimal sumOfSquares, int nMinusOne) {
-        return sumOfSquares.divide(BigDecimal.valueOf(nMinusOne), 15, RoundingMode.HALF_UP);
+        return sumOfSquares.divide(BigDecimal.valueOf(nMinusOne), 100, RoundingMode.HALF_UP);
     }
 
     public static double average(long[] resultSet) {
@@ -143,7 +152,7 @@ public class BenchmarkSorts {
         for (int i = 0; i < resultSet.length; i++) {
             resultAverage = resultAverage.add(BigDecimal.valueOf(resultSet[i]));
         }
-        resultAverage = resultAverage.divide(BigDecimal.valueOf(resultSet.length), 15, RoundingMode.HALF_UP);
+        resultAverage = resultAverage.divide(BigDecimal.valueOf(resultSet.length), 100, RoundingMode.HALF_UP);
         return resultAverage.doubleValue();
     }
 }
