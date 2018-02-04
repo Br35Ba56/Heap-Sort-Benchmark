@@ -6,28 +6,28 @@ import java.time.LocalDateTime;
 
 public class HeapSort implements SortInterface {
 
-    private int count;
+    private long count;
     private long duration;
 
-    public int left(int index) {
+    private int left(int index) {
         return 2 * index;
     }
 
-    public int right(int index) {
+    private int right(int index) {
         return 2 * index + 1;
     }
 
-    public int parent(int index) {
+    private int parent(int index) {
         return (index) / 2;
     }
 
-    public void swap(int[] array, int parent, int child) {
+    private void swap(int[] array, int parent, int child) {
         int temp = array[parent];
         array[parent] = array[child];
         array[child] = temp;
     }
 
-    public void checkSort(int[] array) throws UnsortedException {
+    private void checkSort(int[] array) throws UnsortedException {
         for (int i = 1; i < array.length; i++) {
             if (array[i - 1] > array[i]) {
                 throw new UnsortedException("Array Not Sorted");
@@ -57,9 +57,10 @@ public class HeapSort implements SortInterface {
             swap(array, i, max);
             heapifyRecursive(array, max, m);
         }
+        count++;
     }
 
-    public void heapSortRecursive(int n, int[] list) throws UnsortedException {
+    private void heapSortRecursive(int n, int[] list) throws UnsortedException {
         LocalDateTime startTime = LocalDateTime.now();
         buildHeapRecursive(n, list);
         int max = n;
@@ -105,10 +106,11 @@ public class HeapSort implements SortInterface {
             swap(array, i, index);
 
             i = index;
+            count++;
         }
     }
 
-    public void heapSortIterative(int n, int[] list) throws UnsortedException {
+    private void heapSortIterative(int n, int[] list) throws UnsortedException {
         LocalDateTime startTime = LocalDateTime.now();
         buildHeapIterative(n, list);
         int max = n;
@@ -138,7 +140,7 @@ public class HeapSort implements SortInterface {
     }
 
     @Override
-    public int getCount() {
+    public long getCount() {
         return count;
     }
 

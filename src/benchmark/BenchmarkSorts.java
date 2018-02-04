@@ -22,7 +22,6 @@ public class BenchmarkSorts {
     //TODO: Getting divide by zero errors, could be due to dividing numbers and rounding to 100 place.
 
     //Warm up the JVM
-
     static {
         for (int i = 0; i < 4; i++) {
             results = new ArrayList<>();
@@ -51,9 +50,9 @@ public class BenchmarkSorts {
     private BenchmarkSorts() {
     }
 
-    static List<String> results;
+    private static List<String> results;
 
-    static void runSorts() throws UnsortedException {
+    public static void runSorts() throws UnsortedException {
         results = new ArrayList<>();
         HeapSort heapSort = new HeapSort();
 
@@ -62,10 +61,9 @@ public class BenchmarkSorts {
             countSetRecursive = new long[50];
             timeSetRecursive = new long[50];
             for (int runIndex = 0; runIndex < 50; runIndex++) {
-                   for (int j = 1; j < dataSet.length; j++) {
-                       int random = rn.nextInt(100) + 1;  //Random numbers 0 - 99;
-                       dataSet[j] = random;
-                   }
+                for (int j = 1; j < dataSet.length; j++) {
+                    dataSet[j] = rn.nextInt(100) + 1;  //Random numbers 0 - 99;
+                }
 
                 heapSort.iterativeSort(dataSet);
                 countSetIterative[runIndex] = heapSort.getCount();
@@ -75,11 +73,13 @@ public class BenchmarkSorts {
                 countSetRecursive[runIndex] = heapSort.getCount();
                 timeSetRecursive[runIndex] = heapSort.getTime();
             }
+            //Add iterative data
             results.add(String.valueOf(average(countSetIterative)));
             results.add(String.valueOf(coefficientOfVariance(countSetIterative)));
             results.add(String.valueOf(average(timeSetIterative)));
             results.add(String.valueOf(coefficientOfVariance(timeSetIterative)));
 
+            //Add recursive data
             results.add(String.valueOf(average(countSetRecursive)));
             results.add(String.valueOf(coefficientOfVariance(countSetRecursive)));
             results.add(String.valueOf(average(timeSetRecursive)));
@@ -87,11 +87,9 @@ public class BenchmarkSorts {
 
         }
         displayReport(results);
-
-
     }
 
-    static void displayReport(List<String> results) {
+    private static void displayReport(List<String> results) {
         for (int i = 0; i < results.size(); i++) {
             BenchMarkController.getLabelList().get(i).setText(results.get(i));
         }
@@ -116,10 +114,10 @@ public class BenchmarkSorts {
 
         BigDecimal standardDeviation = BigDecimal.valueOf(Math.sqrt(sumOfSquaresDividedByNMinusOne.doubleValue()));
 
-        return standardDeviation.divide(average, 100, RoundingMode.HALF_UP).doubleValue();
+        return standardDeviation.divide(average, 5, RoundingMode.HALF_UP).doubleValue();
     }
 
-    public static List<BigDecimal> subtractTheMean(List<BigDecimal> resultSetBigDecimal, BigDecimal average) {
+    private static List<BigDecimal> subtractTheMean(List<BigDecimal> resultSetBigDecimal, BigDecimal average) {
 
         for (int i = 0; i < resultSetBigDecimal.size(); i++) {
             resultSetBigDecimal.set(i, resultSetBigDecimal.get(i).subtract(average));
@@ -127,7 +125,7 @@ public class BenchmarkSorts {
         return resultSetBigDecimal;
     }
 
-    public static List<BigDecimal> squareEachOfTheDifferences(List<BigDecimal> resultSetBigDecimal) {
+    private static List<BigDecimal> squareEachOfTheDifferences(List<BigDecimal> resultSetBigDecimal) {
 
         for (int i = 0; i < resultSetBigDecimal.size(); i++) {
             resultSetBigDecimal.set(i, resultSetBigDecimal.get(i).pow(2));
@@ -135,7 +133,7 @@ public class BenchmarkSorts {
         return resultSetBigDecimal;
     }
 
-    public static BigDecimal sumOfSquares(List<BigDecimal> resultSetBigDecimal) {
+    private static BigDecimal sumOfSquares(List<BigDecimal> resultSetBigDecimal) {
         BigDecimal sumOfSquares = BigDecimal.ZERO;
         for (int i = 0; i < resultSetBigDecimal.size(); i++) {
             sumOfSquares = sumOfSquares.add(resultSetBigDecimal.get(i));
@@ -143,7 +141,7 @@ public class BenchmarkSorts {
         return sumOfSquares;
     }
 
-    public static BigDecimal divideSums(BigDecimal sumOfSquares, int nMinusOne) {
+    private static BigDecimal divideSums(BigDecimal sumOfSquares, int nMinusOne) {
         return sumOfSquares.divide(BigDecimal.valueOf(nMinusOne), 100, RoundingMode.HALF_UP);
     }
 

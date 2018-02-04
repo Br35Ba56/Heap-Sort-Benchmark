@@ -15,7 +15,7 @@ public class BenchmarkGUI {
     private void initialize()  {
         jFrame = new JFrame();
         jFrame.setResizable(true);
-        jFrame.setBounds(200, 200, 1200, 800);
+        jFrame.setBounds(200, 200, 1250, 500);
 
         jFrame.add(new BenchmarkView());
         JMenuBar menuBar = new JMenuBar();
